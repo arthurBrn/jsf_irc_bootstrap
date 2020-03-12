@@ -7,9 +7,16 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
+app.set('views engine', 'ejs');
 
 
-app.get('/', function(req, res) { res.sendFile(absolutePathToProject + "somehtml.html"); });
+// ,{name: req.params.name}
+
+app.get('/:name', function(req, res){
+    res.render("index.ejs", {
+        name: req.params.name
+    });
+});
 
 app.route('/products').get(function(req, res){res.send("Getting all product");});
 
