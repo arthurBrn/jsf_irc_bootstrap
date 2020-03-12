@@ -1,25 +1,21 @@
 
 var absolutePathToProject="/home/baron/Documents/Epitech/t-jsf-600-bootstrap/";
 
-// récupère le serveur express | en crée une instance
 var express = require('express');
 var app = express();
 
-app.get('/', function(req, res) {
-    res.send("Welcome home!");
-});
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 
-app.route('/products')
-    .get(function(req, res){
-        res.send("Getting all product");
-    });
+
+app.get('/', function(req, res) { res.sendFile(absolutePathToProject + "somehtml.html"); });
+
+app.route('/products').get(function(req, res){res.send("Getting all product");});
 
 app.route("/products/json")
     .get(function(req, res){
-        res.json({
-            'jsonObject':'productToJson'
-        });
+        res.json({'jsonObject':'productToJson'});
     });
 
 app.route("/iwanthtml")
@@ -34,11 +30,16 @@ app.route('/products/:someId')
         console.log(req.params);
     });
 
-
 app.use(function(req, res, next){
     res.status(400).send("NEW 404 PAGE");
 });
 
-app.listen(3000, function(){
-    console.log("client connected");
+server.listen(3000);
+
+io.on('connection', function(socket){
+    console.log("Client connected");
+    socket.on('disconnect', function(){
+        console.log("user disconnected");
+    });
+
 });
